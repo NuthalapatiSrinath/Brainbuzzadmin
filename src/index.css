@@ -1,0 +1,97 @@
+/* src/index.css */
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* --- LIGHT MODE (Clean & Crisp) --- */
+    --color-primary: #ca8a04; /* Deep Gold (Readable on white) */
+    --color-primary-hover: #a16207;
+    --color-primary-light: #fefce8; /* Soft Cream BG */
+    --color-primary-text: #854d0e;
+
+    --color-page: #f8fafc; /* Crisp White-Gray */
+    --color-card: #ffffff; /* Pure White Cards */
+    --color-border: #e2e8f0; /* Subtle Borders */
+
+    --color-text-main: #0f172a; /* Sharp Black-Blue */
+    --color-text-sub: #475569; /* Professional Gray */
+    --color-text-muted: #94a3b8;
+    --color-text-inverse: #ffffff;
+
+    --color-input-bg: #ffffff;
+    --color-input-border: #cbd5e1;
+    --color-input-focus: #ca8a04;
+
+    /* --- DECOR --- */
+    --color-grad-start: #fffbeb;
+    --color-grad-mid: #ffffff;
+    --color-grad-end: #fff7ed;
+    --color-blob: rgba(202, 138, 4, 0.1);
+
+    /* --- STATUS --- */
+    --color-danger: #ef4444;
+    --color-danger-bg: #fef2f2;
+    --color-success: #10b981;
+    --color-success-bg: #ecfdf5;
+
+    --shadow-color: rgba(0, 0, 0, 0.06);
+  }
+
+  /* --- ATTRACTIVE DARK MODE (Midnight Luxury) --- */
+  .dark {
+    /* Glowing Gold accents that pop against the dark bg */
+    --color-primary: #fbbf24;
+    --color-primary-hover: #f59e0b;
+    --color-primary-light: rgba(251, 191, 36, 0.15); /* Gold Glow */
+    --color-primary-text: #fbbf24;
+
+    /* The "Premium" Dark Base */
+    --color-page: #eff0f2; /* Deepest Obsidian Blue */
+    --color-card: #0f172a; /* Rich Navy-Slate for Cards */
+    --color-border: #1e293b; /* Subtle Navy Borders */
+
+    /* High Contrast Text */
+    --color-text-main: #f8fafc; /* Bright White */
+    --color-text-sub: #94a3b8; /* Soft Blue-Gray */
+    --color-text-muted: #64748b;
+    --color-text-inverse: #020617;
+
+    /* Inputs */
+    --color-input-bg: #0f172a;
+    --color-input-border: #334155;
+    --color-input-focus: #fbbf24;
+
+    /* Deep Gradients */
+    --color-grad-start: #020617;
+    --color-grad-mid: #0f172a;
+    --color-grad-end: #1e293b;
+    --color-blob: rgba(251, 191, 36, 0.15);
+
+    /* Vibrant Status Colors */
+    --color-danger: #f87171; /* Soft Red */
+    --color-danger-bg: rgba(239, 68, 68, 0.15);
+    --color-success: #34d399; /* Neon Green */
+    --color-success-bg: rgba(52, 211, 153, 0.15);
+
+    --shadow-color: rgba(0, 0, 0, 0.6); /* Deep shadows for depth */
+  }
+
+  body {
+    background-color: var(--color-page);
+    color: var(--color-text-main);
+    @apply font-sans antialiased transition-colors duration-300;
+  }
+}
+
+/* Polished Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 99px;
+}
