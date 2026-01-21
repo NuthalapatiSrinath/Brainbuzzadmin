@@ -9,6 +9,7 @@ import Layout from "../layouts/Layout";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
+import Settings from "../pages/Settings";
 
 // Placeholder for missing pages (Prevents crashes)
 const Placeholder = ({ title }) => (
@@ -84,7 +85,7 @@ export const appRoutes = [
   // System
   {
     path: "/settings",
-    element: <Placeholder title="Settings" />,
+    element: <Settings />,
     title: "System Settings",
   },
 ];
