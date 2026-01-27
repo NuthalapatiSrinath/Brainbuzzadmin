@@ -1,35 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../api/axiosInstance";
+import { authService } from "../../api/authService";
 import toast from "react-hot-toast";
 
-// --- Async Thunk for Login ---
 export const loginUser = createAsyncThunk(
-  "auth/loginUser",
-  async ({ email, password }, { rejectWithValue }) => {
+  "auth/login",
+  async (credentials, { rejectWithValue }) => {
     try {
-      // Hit your backend endpoint
-      const response = await api.post("/admin/auth/login", { email, password });
+      const response = await authService.login(credentials);
 
-      // Your backend returns: { admin_token, user: {...} }
-      return response.data;
+      const { token, data, message } = response;
+
+      // Save to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(data));
+
+      toast.success(message || "Login successful");
+
+      return { user: data, token };
     } catch (error) {
-      // Handle backend error messages
       const message = error.response?.data?.message || "Login failed";
+      toast.error(message);
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
-// --- Initial State ---
-const user = localStorage.getItem("user")
-  ? JSON.parse(localStorage.getItem("user"))
-  : null;
-const token = localStorage.getItem("token");
-
 const initialState = {
-  user: user,
-  token: token,
-  isAuthenticated: !!token,
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  token: localStorage.getItem("token") || null,
+  isAuthenticated: !!localStorage.getItem("token"),
   isLoading: false,
   error: null,
 };
@@ -42,9 +41,8 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      state.error = null;
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      authService.logout();
+      toast.success("Logged out");
     },
     clearError: (state) => {
       state.error = null;
@@ -52,31 +50,20 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login Pending
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      // Login Success
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
-
-        // Save data from your specific backend response
         state.user = action.payload.user;
-        state.token = action.payload.admin_token; // Mapping admin_token -> token
-
-        // Persist to LocalStorage
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.admin_token);
-
-        toast.success(`Welcome back, ${action.payload.user.email}`);
+        state.token = action.payload.token;
       })
-      // Login Failed
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        toast.error(action.payload);
+        state.isAuthenticated = false;
       });
   },
 });

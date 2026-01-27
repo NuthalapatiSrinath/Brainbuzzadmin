@@ -4,43 +4,43 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import {
   LayoutDashboard,
-  Gem, // Jewelry Item
-  Coins, // Gold Rates
+  BookOpen, // Courses
+  Layers, // Categories
+  FileText, // Test Series
+  Newspaper, // Current Affairs
   ShoppingCart, // Orders
-  Users, // Customers
-  UserCheck, // Staff/Karigars
-  CreditCard, // Payments
-  FileBarChart, // Reports
+  Users, // Users
   Settings,
   LogOut,
   X,
   ChevronRight,
-  Package,
-  Tags,
-  Store,
-  Truck,
   HelpCircle,
+  BrainCircuit,
+  Image as ImageIcon, // Banners
+  Tag, // Coupons
+  Video, // Live Class
+  FileQuestion, // PYQ
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 const Sidebar = ({ isOpen, isMobile, onClose }) => {
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const [openMenus, setOpenMenus] = useState({
-    inventory: false,
-    orders: false,
-    finance: false,
+    courses: false,
+    content: false,
+    users: false,
   });
 
   // Auto expand menu based on active route
   useEffect(() => {
-    if (location.pathname.startsWith("/inventory")) {
-      setOpenMenus((p) => ({ ...p, inventory: true }));
+    if (location.pathname.startsWith("/courses")) {
+      setOpenMenus((p) => ({ ...p, courses: true }));
     }
-    if (location.pathname.startsWith("/orders")) {
-      setOpenMenus((p) => ({ ...p, orders: true }));
-    }
-    if (location.pathname.startsWith("/finance")) {
-      setOpenMenus((p) => ({ ...p, finance: true }));
+    if (location.pathname.startsWith("/content")) {
+      setOpenMenus((p) => ({ ...p, content: true }));
     }
   }, [location.pathname]);
 
@@ -51,6 +51,10 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
 
   const handleLinkClick = () => {
     if (isMobile && onClose) onClose();
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   const sidebarClasses = !isMobile
@@ -87,10 +91,14 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
 
       <aside className={sidebarClasses}>
         {/* HEADER */}
-        <div className="h-14 md:h-header-h flex items-center px-5 border-b border-slate-200 dark:border-slate-800 shrink-0 gap-3 bg-white dark:bg-slate-900 relative">
+        <div className="h-16 flex items-center px-5 border-b border-slate-200 dark:border-slate-800 shrink-0 gap-3 bg-white dark:bg-slate-900 relative">
           {/* Icon Logo (Always visible) */}
-          <div className="w-10 h-10 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-lg shrink-0">
-            <Gem className="w-6 h-6" />
+          <div className="w-10 h-10 flex items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-xl shrink-0 border border-indigo-100 dark:border-indigo-800">
+            <img
+              src="/vite.svg"
+              alt="Logo"
+              className="w-6 h-6 animate-[spin_10s_linear_infinite]"
+            />
           </div>
 
           {/* Text Logo */}
@@ -100,9 +108,9 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
             }`}
           >
             <span className="font-bold text-lg text-slate-800 dark:text-white leading-none">
-              Luxe Gold
+              BrainBuzz
             </span>
-            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">
+            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mt-0.5">
               Admin Panel
             </span>
           </div>
@@ -119,11 +127,11 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
         </div>
 
         {/* NAVIGATION */}
-        <nav className="flex-1 px-2 py-6 overflow-y-auto no-scrollbar">
+        <nav className="flex-1 px-3 py-6 overflow-y-auto no-scrollbar">
           <ul className="space-y-1">
             {/* Overview Section */}
             <li
-              className={`px-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 mt-1 ${
+              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-1 ${
                 isMobile ? "block" : "hidden group-hover:block"
               }`}
             >
@@ -138,165 +146,119 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
               isMobile={isMobile}
             />
 
-            {/* Inventory Section */}
+            {/* Content Management */}
             <li
-              className={`px-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
+              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
                 isMobile ? "block" : "hidden group-hover:block"
               }`}
             >
-              Catalog
+              Content Management
             </li>
 
             <li>
               <MenuButton
-                label="Inventory"
-                icon={Package}
-                isOpen={openMenus.inventory}
-                isActive={isActiveParent(["/inventory"])}
-                onClick={() => toggleMenu("inventory")}
+                label="Courses"
+                icon={BookOpen}
+                isOpen={openMenus.courses}
+                isActive={isActiveParent(["/courses"])}
+                onClick={() => toggleMenu("courses")}
                 isMobile={isMobile}
               />
-              <SubMenu isOpen={openMenus.inventory} isMobile={isMobile}>
+              <SubMenu isOpen={openMenus.courses} isMobile={isMobile}>
                 <SubNavItem
-                  to="/inventory/products"
-                  label="All Products"
+                  to="/courses/all"
+                  label="All Courses"
                   onClick={handleLinkClick}
                 />
                 <SubNavItem
-                  to="/inventory/categories"
+                  to="/courses/categories"
                   label="Categories"
                   onClick={handleLinkClick}
                 />
                 <SubNavItem
-                  to="/inventory/stock"
-                  label="Stock Adjustment"
+                  to="/courses/subjects"
+                  label="Subjects"
                   onClick={handleLinkClick}
                 />
               </SubMenu>
             </li>
 
             <NavItem
-              to="/gold-rates"
-              icon={Coins}
-              label="Gold Rates"
-              onClick={handleLinkClick}
-              isMobile={isMobile}
-            />
-            <NavItem
-              to="/suppliers"
-              icon={Truck}
-              label="Suppliers"
+              to="/test-series"
+              icon={FileText}
+              label="Test Series"
               onClick={handleLinkClick}
               isMobile={isMobile}
             />
 
-            {/* Sales & Orders */}
+            <NavItem
+              to="/live-classes"
+              icon={Video}
+              label="Live Classes"
+              onClick={handleLinkClick}
+              isMobile={isMobile}
+            />
+
+            <NavItem
+              to="/current-affairs"
+              icon={Newspaper}
+              label="Current Affairs"
+              onClick={handleLinkClick}
+              isMobile={isMobile}
+            />
+
+            <NavItem
+              to="/pyq"
+              icon={FileQuestion}
+              label="PYQ Papers"
+              onClick={handleLinkClick}
+              isMobile={isMobile}
+            />
+
+            {/* Sales & Marketing */}
             <li
-              className={`px-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
+              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
                 isMobile ? "block" : "hidden group-hover:block"
               }`}
             >
-              Sales
-            </li>
-
-            <li>
-              <MenuButton
-                label="Orders"
-                icon={ShoppingCart}
-                isOpen={openMenus.orders}
-                isActive={isActiveParent(["/orders"])}
-                onClick={() => toggleMenu("orders")}
-                isMobile={isMobile}
-              />
-              <SubMenu isOpen={openMenus.orders} isMobile={isMobile}>
-                <SubNavItem
-                  to="/orders/new"
-                  label="New Orders"
-                  onClick={handleLinkClick}
-                />
-                <SubNavItem
-                  to="/orders/custom"
-                  label="Custom Orders"
-                  onClick={handleLinkClick}
-                />
-                <SubNavItem
-                  to="/orders/repairs"
-                  label="Repairs"
-                  onClick={handleLinkClick}
-                />
-              </SubMenu>
+              Sales & Users
             </li>
 
             <NavItem
-              to="/customers"
+              to="/orders"
+              icon={ShoppingCart}
+              label="Orders"
+              onClick={handleLinkClick}
+              isMobile={isMobile}
+            />
+
+            <NavItem
+              to="/users"
               icon={Users}
-              label="Customers"
+              label="Students"
               onClick={handleLinkClick}
               isMobile={isMobile}
             />
 
-            {/* Management & Finance */}
-            <li
-              className={`px-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
-                isMobile ? "block" : "hidden group-hover:block"
-              }`}
-            >
-              Management
-            </li>
-
-            <li>
-              <MenuButton
-                label="Finance"
-                icon={CreditCard}
-                isOpen={openMenus.finance}
-                isActive={isActiveParent(["/finance"])}
-                onClick={() => toggleMenu("finance")}
-                isMobile={isMobile}
-              />
-              <SubMenu isOpen={openMenus.finance} isMobile={isMobile}>
-                <SubNavItem
-                  to="/finance/transactions"
-                  label="Transactions"
-                  onClick={handleLinkClick}
-                />
-                <SubNavItem
-                  to="/finance/invoices"
-                  label="Invoices"
-                  onClick={handleLinkClick}
-                />
-                <SubNavItem
-                  to="/finance/expenses"
-                  label="Expenses"
-                  onClick={handleLinkClick}
-                />
-              </SubMenu>
-            </li>
-
             <NavItem
-              to="/staff"
-              icon={UserCheck}
-              label="Staff / Karigars"
+              to="/coupons"
+              icon={Tag}
+              label="Coupons"
               onClick={handleLinkClick}
               isMobile={isMobile}
             />
+
             <NavItem
-              to="/reports"
-              icon={FileBarChart}
-              label="Reports"
-              onClick={handleLinkClick}
-              isMobile={isMobile}
-            />
-            <NavItem
-              to="/showrooms"
-              icon={Store}
-              label="Showrooms"
+              to="/banners"
+              icon={ImageIcon}
+              label="Banners"
               onClick={handleLinkClick}
               isMobile={isMobile}
             />
 
             {/* System */}
             <li
-              className={`px-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
+              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
                 isMobile ? "block" : "hidden group-hover:block"
               }`}
             >
@@ -322,13 +284,16 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
 
         {/* FOOTER */}
         <div
-          className={`p-6 border-t border-slate-200 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900 ${
+          className={`p-4 border-t border-slate-200 dark:border-slate-800 shrink-0 bg-slate-50/50 dark:bg-slate-900 ${
             isMobile ? "block" : "hidden group-hover:block"
           }`}
         >
-          <button className="w-full flex items-center justify-center gap-2 text-red-500 bg-red-50 hover:bg-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/20 py-3 rounded-lg font-bold transition-colors text-sm">
-            <LogOut size={18} />
-            Logout
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-100 py-2.5 rounded-xl font-bold transition-all text-xs uppercase tracking-wide shadow-sm"
+          >
+            <LogOut size={16} />
+            Logout Account
           </button>
         </div>
       </aside>
@@ -336,7 +301,7 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
   );
 };
 
-/* ---------- SUB COMPONENTS ---------- */
+/* ---------- SUB COMPONENTS (Updated Colors) ---------- */
 
 const NavItem = ({ to, icon: Icon, label, onClick, isMobile }) => (
   <li>
@@ -344,29 +309,29 @@ const NavItem = ({ to, icon: Icon, label, onClick, isMobile }) => (
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center px-4 py-3.5 rounded-lg mb-1 transition-all duration-200 group/item relative overflow-hidden
+        `flex items-center px-3 py-3 rounded-xl mb-1 transition-all duration-200 group/item relative overflow-hidden
         ${
           isActive
-            ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-500 font-semibold shadow-sm"
-            : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
+            ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400 font-bold shadow-sm ring-1 ring-indigo-100 dark:ring-indigo-800"
+            : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
         }`
       }
     >
       {({ isActive }) => (
         <>
           {isActive && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-amber-500 rounded-r-full" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-indigo-600 rounded-r-full" />
           )}
 
           <Icon
-            className={`w-5 h-5 mr-3 shrink-0 ${
+            className={`w-5 h-5 mr-3 shrink-0 transition-colors ${
               isActive
-                ? "text-amber-600 dark:text-amber-500"
-                : "text-slate-400 group-hover/item:text-amber-600 dark:group-hover/item:text-amber-500"
+                ? "text-indigo-600 dark:text-indigo-400"
+                : "text-slate-400 group-hover/item:text-slate-600 dark:group-hover/item:text-slate-300"
             }`}
           />
           <span
-            className={`truncate ${
+            className={`truncate font-medium text-sm ${
               isMobile ? "inline" : "hidden group-hover:inline"
             }`}
           >
@@ -388,23 +353,23 @@ const MenuButton = ({
 }) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-lg mb-1 transition-all duration-200 group/item
+    className={`w-full flex items-center justify-between px-3 py-3 rounded-xl mb-1 transition-all duration-200 group/item
       ${
         isActive
-          ? "bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-medium shadow-sm"
-          : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
+          ? "bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold shadow-sm ring-1 ring-slate-200 dark:ring-slate-700"
+          : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
       }`}
   >
     <div className="flex items-center">
       <Icon
-        className={`w-5 h-5 mr-3 ${
+        className={`w-5 h-5 mr-3 transition-colors ${
           isActive
-            ? "text-amber-600 dark:text-amber-500"
-            : "text-slate-400 group-hover/item:text-amber-600 dark:group-hover/item:text-amber-500"
+            ? "text-indigo-600 dark:text-indigo-400"
+            : "text-slate-400 group-hover/item:text-slate-600 dark:group-hover/item:text-slate-300"
         }`}
       />
       <span
-        className={`truncate ${
+        className={`truncate font-medium text-sm ${
           isMobile ? "inline" : "hidden group-hover:inline"
         }`}
       >
@@ -427,7 +392,7 @@ const SubMenu = ({ isOpen, children, isMobile }) => (
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: "auto", opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
-        className={`ml-5 pl-3 border-l-2 border-slate-200 dark:border-slate-700 overflow-hidden ${
+        className={`ml-4 pl-4 border-l border-slate-200 dark:border-slate-800 overflow-hidden space-y-1 my-1 ${
           isMobile ? "block" : "hidden group-hover:block"
         }`}
       >
@@ -443,11 +408,11 @@ const SubNavItem = ({ to, label, onClick }) => (
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `block px-4 py-2.5 text-[13px] rounded-r-lg transition-all duration-200
+        `block px-3 py-2 text-[13px] rounded-lg transition-all duration-200 font-medium
         ${
           isActive
-            ? "text-amber-700 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-900/20 border-l-2 border-amber-500 -ml-[2px]"
-            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+            ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20"
+            : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
         }`
       }
     >

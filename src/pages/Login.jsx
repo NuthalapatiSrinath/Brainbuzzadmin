@@ -2,25 +2,25 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import { Lock, Mail, ArrowRight, Loader2, Gem } from "lucide-react";
+import { Lock, Mail, ArrowRight, Loader2 } from "lucide-react";
 import { loginUser, clearError } from "../store/slices/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Access Redux Auth State
+  // Get Auth state from Redux
   const { isLoading, isAuthenticated, error } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const [focusedField, setFocusedField] = useState(null);
   const [formData, setFormData] = useState({
-    email: "", // Changed from 'number' to 'email' for your backend
+    email: "",
     password: "",
   });
 
-  // Redirect if logged in
+  // ✅ REDIRECT LOGIC: Updates automatically when Redux state changes
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
@@ -39,13 +39,13 @@ const Login = () => {
     e.preventDefault();
     if (!formData.email || !formData.password) return;
 
-    // Dispatch the Redux action we created earlier
+    // ✅ DISPATCH REDUX ACTION (This triggers the slice -> updates state -> triggers useEffect redirect)
     dispatch(loginUser(formData));
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#0f172a] relative overflow-hidden font-sans">
-      {/* --- CSS FIX FOR AUTOFILL BACKGROUND --- */}
+      {/* Autofill CSS Fix */}
       <style>{`
         input:-webkit-autofill,
         input:-webkit-autofill:hover, 
@@ -62,18 +62,12 @@ const Login = () => {
           66% { transform: translate(-20px, 20px) scale(0.9); }
           100% { transform: translate(0px, 0px) scale(1); }
         }
-        .animate-blob {
-          animation: blob 10s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
+        .animate-blob { animation: blob 10s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
       `}</style>
 
-      {/* Background Effects with Animation */}
+      {/* Animated Background Blobs */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/30 rounded-full blur-[120px] pointer-events-none animate-blob" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/30 rounded-full blur-[120px] pointer-events-none animate-blob animation-delay-2000" />
       <div className="absolute bottom-[20%] left-[20%] w-[400px] h-[400px] bg-pink-600/20 rounded-full blur-[120px] pointer-events-none animate-blob animation-delay-4000" />
@@ -86,22 +80,25 @@ const Login = () => {
       >
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-10">
           <div className="text-center mb-10">
-            {/* Circular Logo with Animation & Gradient Border */}
+            {/* ✅ ROTATING ICON FROM PUBLIC */}
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               className="relative w-24 h-24 mx-auto mb-6"
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full animate-[spin_4s_linear_infinite] blur-sm opacity-70"></div>
-              <div className="relative w-full h-full rounded-full flex items-center justify-center overflow-hidden bg-slate-900 border-2 border-white/20 shadow-lg shadow-indigo-500/25">
-                {/* Replaced Image with Gem Icon for consistency, or use your image tag here */}
-                <Gem className="w-10 h-10 text-indigo-400" />
+              <div className="relative w-full h-full rounded-full flex items-center justify-center overflow-hidden bg-slate-900 border-2 border-white/20 shadow-lg shadow-indigo-500/25 p-3">
+                <img
+                  src="/vite.svg"
+                  alt="Logo"
+                  className="w-full h-full object-contain animate-[spin_10s_linear_infinite]"
+                />
               </div>
             </motion.div>
 
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-purple-200 tracking-tight mb-2">
-              Luxe Admin
+              BrainBuzz Admin
             </h1>
             <p className="text-slate-400 text-sm">
               Secure Authentication Required
@@ -138,8 +135,8 @@ const Login = () => {
                   onFocus={() => setFocusedField("email")}
                   onBlur={() => setFocusedField(null)}
                   className="w-full bg-transparent text-white px-4 py-3.5 outline-none placeholder-slate-600"
-                  placeholder="admin@luxe.com"
-                  autoComplete="off"
+                  placeholder="admin@brainbuzz.com"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -174,16 +171,17 @@ const Login = () => {
                   onFocus={() => setFocusedField("password")}
                   onBlur={() => setFocusedField(null)}
                   className="w-full bg-transparent text-white px-4 py-3.5 outline-none placeholder-slate-600"
-                  placeholder="••••••••"
+                  placeholder="Enter Password"
+                  autoComplete="current-password"
                   required
                 />
               </div>
             </div>
 
-            {/* Error Message Display */}
+            {/* Error Message */}
             {error && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
-                {error}
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center animate-pulse">
+                {typeof error === "string" ? error : "Login failed"}
               </div>
             )}
 
