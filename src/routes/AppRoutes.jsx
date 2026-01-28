@@ -10,6 +10,9 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import NotFound from "../pages/NotFound";
 import Settings from "../pages/Settings";
+import BannerManager from "../pages/content/BannerManager";
+import CouponManager from "../pages/content/CouponManager";
+import OrderManager from "../pages/content/OrderManager";
 
 // Placeholder for missing pages (Prevents crashes)
 const Placeholder = ({ title }) => (
@@ -23,7 +26,22 @@ const Placeholder = ({ title }) => (
 export const appRoutes = [
   // Overview
   { path: "/", element: <Dashboard />, title: "Dashboard Overview" },
-
+  // Content Management
+  {
+    path: "/banners",
+    element: <BannerManager />,
+    title: "Banner Management",
+  },
+  {
+    path: "/coupons",
+    element: <CouponManager />,
+    title: "Coupon Management",
+  },
+  {
+    path: "/orders",
+    element: <OrderManager />,
+    title: "Coupon Management",
+  },
   // Inventory
   {
     path: "/inventory/products",

@@ -10,7 +10,7 @@ const Header = ({ onMenuClick, theme, toggleTheme }) => {
 
   // Find the current route configuration to get the title
   const currentRoute = appRoutes.find(
-    (route) => route.path === location.pathname
+    (route) => route.path === location.pathname,
   );
 
   const pageTitle = currentRoute ? currentRoute.title : "Dashboard";
@@ -54,9 +54,7 @@ const Header = ({ onMenuClick, theme, toggleTheme }) => {
 
         <div className="hidden md:flex items-center gap-2">
           {/* Context Icon (Jewelry Theme) */}
-          <div className="bg-amber-100 dark:bg-amber-900/30 p-1.5 rounded-md text-amber-600 dark:text-amber-400">
-            <Gem className="w-4 h-4" />
-          </div>
+
           <h2 className="text-xl font-bold text-slate-800 dark:text-white transition-all duration-300 tracking-tight">
             {pageTitle}
           </h2>
