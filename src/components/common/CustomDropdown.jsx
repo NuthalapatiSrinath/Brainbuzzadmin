@@ -11,6 +11,7 @@ const CustomDropdown = ({
   searchable = false,
   error,
   disabled = false,
+  required = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,10 +44,10 @@ const CustomDropdown = ({
   };
 
   return (
-    <div className="w-full space-y-1.5" ref={containerRef}>
+    <div className="w-full relative" ref={containerRef}>
       {label && (
-        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-          {label}
+        <label className="block text-sm font-bold text-slate-700 mb-2">
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
 
@@ -56,13 +57,13 @@ const CustomDropdown = ({
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
           className={`
-            w-full flex items-center justify-between px-4 py-2.5 rounded-xl border transition-all duration-200 outline-none
+            w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 outline-none
             ${
               error
                 ? "border-red-300 bg-red-50 text-red-900"
                 : isOpen
-                  ? "border-indigo-500 ring-4 ring-indigo-50 bg-white"
-                  : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300"
+                  ? "border-indigo-500 ring-4 ring-indigo-50 bg-white shadow-md transform -translate-y-0.5"
+                  : "border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm"
             }
             ${
               disabled
@@ -80,7 +81,7 @@ const CustomDropdown = ({
               />
             )}
             <span
-              className={`block truncate text-sm font-medium ${
+              className={`block truncate text-sm font-semibold ${
                 selectedOption ? "text-slate-700" : "text-slate-400"
               }`}
             >

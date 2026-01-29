@@ -14,7 +14,23 @@ import BannerManager from "../pages/content/BannerManager";
 import CouponManager from "../pages/content/CouponManager";
 import OrderManager from "../pages/content/OrderManager";
 
-// Placeholder for missing pages (Prevents crashes)
+// Content Management Pages
+import PYQManager from "../pages/content/pyq/PYQManager";
+import LanguageManager from "../pages/content/LanguageManager";
+import ValidityManager from "../pages/content/ValidityManager";
+import PublicationManager from "../pages/content/PublicationManager";
+import CurrentAffairsManager from "../pages/content/CurrentAffairsManager";
+import EBookManager from "../pages/content/EBookManager";
+import DailyQuizManager from "../pages/content/DailyQuizManager";
+import CourseManager from "../pages/content/CourseManager";
+import LiveClassManager from "../pages/content/LiveClassManager";
+
+// Test Series (New Page-Based Structure)
+import TestSeriesList from "../pages/content/test-series/TestSeriesList";
+import SeriesDashboard from "../pages/content/test-series/SeriesDashboard";
+import TestDesigner from "../pages/content/test-series/TestDesigner";
+
+// Placeholder for missing pages
 const Placeholder = ({ title }) => (
   <div className="p-6">
     <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
@@ -22,10 +38,11 @@ const Placeholder = ({ title }) => (
   </div>
 );
 
-// --- 1. DEFINE ROUTES & TITLES HERE ---
+// --- ROUTE DEFINITIONS ---
 export const appRoutes = [
   // Overview
   { path: "/", element: <Dashboard />, title: "Dashboard Overview" },
+
   // Content Management
   {
     path: "/banners",
@@ -40,8 +57,90 @@ export const appRoutes = [
   {
     path: "/orders",
     element: <OrderManager />,
-    title: "Coupon Management",
+    title: "Order Management",
   },
+
+  // ✅ Previous Year Questions (Unified Route)
+  {
+    path: "/pyq",
+    element: <PYQManager />,
+    title: "Previous Year Questions",
+  },
+  // Redirect sub-routes to the main manager to prevent 404s
+  {
+    path: "/pyq/categories",
+    element: <PYQManager />,
+    title: "PYQ Categories",
+  },
+  {
+    path: "/pyq/subcategories",
+    element: <PYQManager />,
+    title: "PYQ SubCategories",
+  },
+  {
+    path: "/languages",
+    element: <LanguageManager />,
+    title: "Languages",
+  },
+  {
+    path: "/publications",
+    element: <PublicationManager />,
+    title: "Publications",
+  },
+
+  {
+    path: "/validity",
+    element: <ValidityManager />,
+    title: "Validity Options",
+  },
+  {
+    path: "/current-affairs",
+    element: <CurrentAffairsManager />,
+    title: "Current Affairs",
+  },
+  {
+    path: "/ebooks",
+    element: <EBookManager />,
+    title: "E-Books",
+  },
+  {
+    path: "/daily-quizzes",
+    element: <DailyQuizManager />,
+    title: "Daily Quizzes",
+  },
+  {
+    path: "/courses",
+    element: <CourseManager />,
+    title: "Online Courses",
+  },
+  {
+    path: "/live-classes",
+    element: <LiveClassManager />,
+    title: "Live Classes",
+  },
+
+  // --- Test Series (New Routes) ---
+  {
+    path: "/test-series",
+    element: <TestSeriesList />,
+    title: "Test Series List",
+  },
+  {
+    path: "/test-series/create",
+    element: <SeriesDashboard />, // Create Mode
+    title: "Create Series",
+  },
+  {
+    path: "/test-series/:id",
+    element: <SeriesDashboard />, // Edit/Manage Mode
+    title: "Manage Series",
+  },
+  {
+    path: "/test-series/:seriesId/tests/:testId",
+    element: <TestDesigner />, // Deep Test Editing
+    title: "Design Test",
+  },
+
   // Inventory
   {
     path: "/inventory/products",
@@ -106,9 +205,16 @@ export const appRoutes = [
     element: <Settings />,
     title: "System Settings",
   },
+
+  // Support
+  {
+    path: "/support",
+    element: <Placeholder title="Support" />,
+    title: "Help & Support",
+  },
 ];
 
-// --- 2. ROUTE COMPONENTS ---
+// --- COMPONENTS ---
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -142,7 +248,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        {/* Generates routes automatically from the list above */}
+        {/* Generate Routes */}
         {appRoutes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}

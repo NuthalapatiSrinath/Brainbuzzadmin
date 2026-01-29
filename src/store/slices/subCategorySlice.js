@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import subCategoryService from "../../api/subCategoryService"; // You created this earlier
-import toast from "react-hot-toast";
+import subCategoryService from "../../api/subCategoryService";
 
 // --- THUNKS ---
 
 export const fetchSubCategories = createAsyncThunk(
-  "subCategories/fetchAll",
+  "subCategory/fetchAll",
   async ({ contentType, categoryId } = {}, { rejectWithValue }) => {
     try {
-      // Pass params to service
       const response = await subCategoryService.getAll(contentType, categoryId);
       return response.data;
     } catch (error) {
@@ -20,7 +18,7 @@ export const fetchSubCategories = createAsyncThunk(
 );
 
 export const createSubCategory = createAsyncThunk(
-  "subCategories/create",
+  "subCategory/create",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await subCategoryService.create(formData);
@@ -34,7 +32,7 @@ export const createSubCategory = createAsyncThunk(
 );
 
 export const updateSubCategory = createAsyncThunk(
-  "subCategories/update",
+  "subCategory/update",
   async ({ id, formData }, { rejectWithValue }) => {
     try {
       const response = await subCategoryService.update(id, formData);
@@ -46,7 +44,7 @@ export const updateSubCategory = createAsyncThunk(
 );
 
 export const deleteSubCategory = createAsyncThunk(
-  "subCategories/delete",
+  "subCategory/delete",
   async (id, { rejectWithValue }) => {
     try {
       await subCategoryService.delete(id);
@@ -60,8 +58,9 @@ export const deleteSubCategory = createAsyncThunk(
 // --- SLICE ---
 
 const subCategorySlice = createSlice({
-  name: "subCategories",
+  name: "subCategory", // ✅ Singular to match store
   initialState: {
+    subCategories: [], // Matched to component usage
     items: [],
     loading: false,
     error: null,
@@ -76,6 +75,7 @@ const subCategorySlice = createSlice({
       })
       .addCase(fetchSubCategories.fulfilled, (state, action) => {
         state.loading = false;
+        state.subCategories = action.payload;
         state.items = action.payload;
       })
       .addCase(fetchSubCategories.rejected, (state, action) => {
@@ -86,6 +86,7 @@ const subCategorySlice = createSlice({
       // Create
       .addCase(createSubCategory.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        if (state.subCategories) state.subCategories.push(action.payload);
       })
 
       // Update
@@ -95,12 +96,17 @@ const subCategorySlice = createSlice({
         );
         if (index !== -1) {
           state.items[index] = action.payload;
+          if (state.subCategories) state.subCategories[index] = action.payload;
         }
       })
 
       // Delete
       .addCase(deleteSubCategory.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item._id !== action.payload);
+        if (state.subCategories)
+          state.subCategories = state.subCategories.filter(
+            (item) => item._id !== action.payload,
+          );
       });
   },
 });

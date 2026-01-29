@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   BookOpen, // Courses
-  Layers, // Categories
   FileText, // Test Series
   Newspaper, // Current Affairs
   ShoppingCart, // Orders
@@ -15,11 +14,14 @@ import {
   X,
   ChevronRight,
   HelpCircle,
-  BrainCircuit,
   Image as ImageIcon, // Banners
   Tag, // Coupons
   Video, // Live Class
   FileQuestion, // PYQ
+  Languages,
+  Clock,
+  Book, // Publications
+  Layers,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/slices/authSlice";
@@ -32,6 +34,7 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
     courses: false,
     content: false,
     users: false,
+    pyq: false,
   });
 
   // Auto expand menu based on active route
@@ -39,7 +42,18 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
     if (location.pathname.startsWith("/courses")) {
       setOpenMenus((p) => ({ ...p, courses: true }));
     }
-    if (location.pathname.startsWith("/content")) {
+    // Expand Content Menu if any content route is active
+    if (
+      [
+        "/test-series",
+        "/live-classes",
+        "/current-affairs",
+        "/pyq",
+        "/publications",
+        "/ebooks",
+        "/daily-quizzes",
+      ].some((path) => location.pathname.startsWith(path))
+    ) {
       setOpenMenus((p) => ({ ...p, content: true }));
     }
   }, [location.pathname]);
@@ -92,7 +106,6 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
       <aside className={sidebarClasses}>
         {/* HEADER */}
         <div className="h-16 flex items-center px-5 border-b border-slate-200 dark:border-slate-800 shrink-0 gap-3 bg-white dark:bg-slate-900 relative">
-          {/* Icon Logo (Always visible) */}
           <div className="w-10 h-10 flex items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 rounded-xl shrink-0 border border-indigo-100 dark:border-indigo-800">
             <img
               src="/vite.svg"
@@ -101,7 +114,6 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
             />
           </div>
 
-          {/* Text Logo */}
           <div
             className={`flex flex-col ${
               isMobile ? "block" : "hidden group-hover:block"
@@ -115,7 +127,6 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
             </span>
           </div>
 
-          {/* Mobile close button */}
           {isMobile && (
             <button
               onClick={onClose}
@@ -129,14 +140,7 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
         {/* NAVIGATION */}
         <nav className="flex-1 px-3 py-6 overflow-y-auto no-scrollbar">
           <ul className="space-y-1">
-            {/* Overview Section */}
-            <li
-              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-1 ${
-                isMobile ? "block" : "hidden group-hover:block"
-              }`}
-            >
-              Overview
-            </li>
+            <SectionLabel label="Overview" isMobile={isMobile} />
 
             <NavItem
               to="/"
@@ -146,15 +150,9 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
               isMobile={isMobile}
             />
 
-            {/* Content Management */}
-            <li
-              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
-                isMobile ? "block" : "hidden group-hover:block"
-              }`}
-            >
-              Content Management
-            </li>
+            <SectionLabel label="Learning Management" isMobile={isMobile} />
 
+            {/* Courses Menu */}
             <li>
               <MenuButton
                 label="Courses"
@@ -166,63 +164,71 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
               />
               <SubMenu isOpen={openMenus.courses} isMobile={isMobile}>
                 <SubNavItem
-                  to="/courses/all"
+                  to="/courses"
                   label="All Courses"
-                  onClick={handleLinkClick}
-                />
-                <SubNavItem
-                  to="/courses/categories"
-                  label="Categories"
-                  onClick={handleLinkClick}
-                />
-                <SubNavItem
-                  to="/courses/subjects"
-                  label="Subjects"
                   onClick={handleLinkClick}
                 />
               </SubMenu>
             </li>
 
-            <NavItem
-              to="/test-series"
-              icon={FileText}
-              label="Test Series"
-              onClick={handleLinkClick}
-              isMobile={isMobile}
-            />
-
-            <NavItem
-              to="/live-classes"
-              icon={Video}
-              label="Live Classes"
-              onClick={handleLinkClick}
-              isMobile={isMobile}
-            />
-
-            <NavItem
-              to="/current-affairs"
-              icon={Newspaper}
-              label="Current Affairs"
-              onClick={handleLinkClick}
-              isMobile={isMobile}
-            />
-
-            <NavItem
-              to="/pyq"
-              icon={FileQuestion}
-              label="PYQ Papers"
-              onClick={handleLinkClick}
-              isMobile={isMobile}
-            />
-
-            {/* Sales & Marketing */}
-            <li
-              className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
-                isMobile ? "block" : "hidden group-hover:block"
-              }`}
-            >
-              Sales & Users
+            {/* Content Group (Collapsible) */}
+            <li>
+              <MenuButton
+                label="Content"
+                icon={Layers}
+                isOpen={openMenus.content}
+                isActive={isActiveParent([
+                  "/test-series",
+                  "/live-classes",
+                  "/current-affairs",
+                  "/pyq",
+                  "/publications",
+                  "/ebooks",
+                  "/daily-quizzes",
+                ])}
+                onClick={() => toggleMenu("content")}
+                isMobile={isMobile}
+              />
+              <SubMenu isOpen={openMenus.content} isMobile={isMobile}>
+                <SubNavItem
+                  to="/test-series"
+                  label="Test Series"
+                  onClick={handleLinkClick}
+                />
+                <SubNavItem
+                  to="/live-classes"
+                  label="Live Classes"
+                  onClick={handleLinkClick}
+                />
+                <SubNavItem
+                  to="/current-affairs"
+                  label="Current Affairs"
+                  onClick={handleLinkClick}
+                />
+                <SubNavItem
+                  to="/pyq"
+                  label="PYQ Papers"
+                  onClick={handleLinkClick}
+                />
+                <SubNavItem
+                  to="/publications"
+                  label="Publications"
+                  onClick={handleLinkClick}
+                />
+                <SubNavItem
+                  to="/ebooks"
+                  label="E-Books"
+                  onClick={handleLinkClick}
+                />
+                <SubNavItem
+                  to="/daily-quizzes"
+                  label="Daily Quizzes"
+                  onClick={handleLinkClick}
+                />
+              </SubMenu>
             </li>
+
+            <SectionLabel label="Sales & Users" isMobile={isMobile} />
 
             <NavItem
               to="/orders"
@@ -265,6 +271,21 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
               System
             </li>
 
+            {/* ✅ Added Languages Here */}
+            <NavItem
+              to="/languages"
+              icon={Languages}
+              label="Languages"
+              onClick={handleLinkClick}
+              isMobile={isMobile}
+            />
+            <NavItem
+              to="/validity"
+              icon={Clock}
+              label="Validities"
+              onClick={handleLinkClick}
+              isMobile={isMobile}
+            />
             <NavItem
               to="/settings"
               icon={Settings}
@@ -302,6 +323,16 @@ const Sidebar = ({ isOpen, isMobile, onClose }) => {
 };
 
 /* ---------- SUB COMPONENTS (Updated Colors) ---------- */
+
+const SectionLabel = ({ label, isMobile }) => (
+  <li
+    className={`px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-6 ${
+      isMobile ? "block" : "hidden group-hover:block"
+    }`}
+  >
+    {label}
+  </li>
+);
 
 const NavItem = ({ to, icon: Icon, label, onClick, isMobile }) => (
   <li>
@@ -406,6 +437,7 @@ const SubNavItem = ({ to, label, onClick }) => (
   <li>
     <NavLink
       to={to}
+      end={true}
       onClick={onClick}
       className={({ isActive }) =>
         `block px-3 py-2 text-[13px] rounded-lg transition-all duration-200 font-medium

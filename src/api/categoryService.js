@@ -12,43 +12,42 @@ const createFormData = (data) => {
 };
 
 const categoryService = {
-  // GET /?contentType=...&isActive=...
+  // ✅ FIX: URL changed to /admin/categories
   getAll: async (contentType, isActive) => {
     const params = { contentType };
     if (isActive !== undefined) params.isActive = isActive;
 
-    const response = await axiosInstance.get("/categories", { params });
+    const response = await axiosInstance.get("/admin/categories", { params });
     return response.data;
   },
 
-  // GET /:id
   getById: async (id) => {
-    const response = await axiosInstance.get(`/categories/${id}`);
+    const response = await axiosInstance.get(`/admin/categories/${id}`);
     return response.data;
   },
 
-  // POST / (Multipart)
   create: async (data) => {
-    // data should be object like: { name, description, contentType, thumbnail: File, isActive }
     const formData = createFormData(data);
-    const response = await axiosInstance.post("/categories", formData, {
+    const response = await axiosInstance.post("/admin/categories", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   },
 
-  // PUT /:id (Multipart)
   update: async (id, data) => {
     const formData = createFormData(data);
-    const response = await axiosInstance.put(`/categories/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await axiosInstance.put(
+      `/admin/categories/${id}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
     return response.data;
   },
 
-  // DELETE /:id
   delete: async (id) => {
-    const response = await axiosInstance.delete(`/categories/${id}`);
+    const response = await axiosInstance.delete(`/admin/categories/${id}`);
     return response.data;
   },
 };

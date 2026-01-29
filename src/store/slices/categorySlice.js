@@ -1,16 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import categoryService from "../../api/categoryService"; // You created this earlier
-import toast from "react-hot-toast";
+import categoryService from "../../api/categoryService";
 
 // --- THUNKS ---
 
-// Fetch all categories (optionally filtered by contentType)
 export const fetchCategories = createAsyncThunk(
-  "categories/fetchAll",
-  async (contentType, { rejectWithValue }) => {
+  "category/fetchAll",
+  async ({ contentType, isActive } = {}, { rejectWithValue }) => {
     try {
-      const response = await categoryService.getAll(contentType);
-      return response.data; // Assuming API returns { data: [...] }
+      // Backend requires object params now based on service update
+      const response = await categoryService.getAll(contentType, isActive);
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch categories",
@@ -20,7 +19,7 @@ export const fetchCategories = createAsyncThunk(
 );
 
 export const createCategory = createAsyncThunk(
-  "categories/create",
+  "category/create",
   async (formData, { rejectWithValue }) => {
     try {
       const response = await categoryService.create(formData);
@@ -34,7 +33,7 @@ export const createCategory = createAsyncThunk(
 );
 
 export const updateCategory = createAsyncThunk(
-  "categories/update",
+  "category/update",
   async ({ id, formData }, { rejectWithValue }) => {
     try {
       const response = await categoryService.update(id, formData);
@@ -46,11 +45,11 @@ export const updateCategory = createAsyncThunk(
 );
 
 export const deleteCategory = createAsyncThunk(
-  "categories/delete",
+  "category/delete",
   async (id, { rejectWithValue }) => {
     try {
       await categoryService.delete(id);
-      return id; // Return ID to filter it out from state locally
+      return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Delete failed");
     }
@@ -60,9 +59,10 @@ export const deleteCategory = createAsyncThunk(
 // --- SLICE ---
 
 const categorySlice = createSlice({
-  name: "categories",
+  name: "category", // ✅ Singular to match store
   initialState: {
-    items: [], // Stores the list of categories
+    categories: [], // Changed from 'items' to 'categories' to match your component logic if needed, or keep 'items'
+    items: [], // Keeping 'items' based on your previous code
     loading: false,
     error: null,
   },
@@ -76,6 +76,7 @@ const categorySlice = createSlice({
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.loading = false;
+        state.categories = action.payload; // Updating both just in case
         state.items = action.payload;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
@@ -85,7 +86,8 @@ const categorySlice = createSlice({
 
       // Create
       .addCase(createCategory.fulfilled, (state, action) => {
-        state.items.push(action.payload); // Add new item to list
+        state.items.push(action.payload);
+        if (state.categories) state.categories.push(action.payload);
       })
 
       // Update
@@ -94,13 +96,18 @@ const categorySlice = createSlice({
           (item) => item._id === action.payload._id,
         );
         if (index !== -1) {
-          state.items[index] = action.payload; // Update item in list
+          state.items[index] = action.payload;
+          if (state.categories) state.categories[index] = action.payload;
         }
       })
 
       // Delete
       .addCase(deleteCategory.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item._id !== action.payload);
+        if (state.categories)
+          state.categories = state.categories.filter(
+            (item) => item._id !== action.payload,
+          );
       });
   },
 });

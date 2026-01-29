@@ -11,36 +11,26 @@ const createFormData = (data) => {
 };
 
 const subCategoryService = {
-  // GET /?contentType=...&category=...
+  // ✅ FIX: URL changed to /admin/subcategories
   getAll: async (contentType, categoryId) => {
     const params = { contentType };
     if (categoryId) params.category = categoryId;
 
-    const response = await axiosInstance.get("/sub-categories", { params });
-    return response.data;
-  },
-
-  // GET /:id
-  getById: async (id) => {
-    const response = await axiosInstance.get(`/sub-categories/${id}`);
-    return response.data;
-  },
-
-  // POST / (Multipart)
-  create: async (data) => {
-    // data: { category (id), name, description, thumbnail: File, isActive }
-    const formData = createFormData(data);
-    const response = await axiosInstance.post("/sub-categories", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    const response = await axiosInstance.get("/admin/subcategories", {
+      params,
     });
     return response.data;
   },
 
-  // PUT /:id (Multipart)
-  update: async (id, data) => {
+  getById: async (id) => {
+    const response = await axiosInstance.get(`/admin/subcategories/${id}`);
+    return response.data;
+  },
+
+  create: async (data) => {
     const formData = createFormData(data);
-    const response = await axiosInstance.put(
-      `/sub-categories/${id}`,
+    const response = await axiosInstance.post(
+      "/admin/subcategories",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -49,9 +39,20 @@ const subCategoryService = {
     return response.data;
   },
 
-  // DELETE /:id
+  update: async (id, data) => {
+    const formData = createFormData(data);
+    const response = await axiosInstance.put(
+      `/admin/subcategories/${id}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+    );
+    return response.data;
+  },
+
   delete: async (id) => {
-    const response = await axiosInstance.delete(`/sub-categories/${id}`);
+    const response = await axiosInstance.delete(`/admin/subcategories/${id}`);
     return response.data;
   },
 };
